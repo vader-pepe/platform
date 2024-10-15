@@ -1,5 +1,6 @@
 package org.ikapiar.db.models;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import java.util.List;
 public class Career extends PanacheEntity {
     @NotNull
     @ManyToOne(optional = false)
+    @JsonIncludeProperties("id")
     public Alumni alumni;
 
     @NotNull
