@@ -23,13 +23,13 @@ dependencies {
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-hibernate-orm'
     implementation 'io.quarkus:quarkus-hibernate-orm-rest-data-panache'
-    implementation 'io.opentelemetry.instrumentation:opentelemetry-jdbc'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
     implementation 'io.quarkus:quarkus-observability-devservices-lgtm'
     implementation 'io.quarkus:quarkus-oidc'
     implementation 'io.quarkus:quarkus-keycloak-authorization'
+    implementation 'io.opentelemetry.instrumentation:opentelemetry-jdbc:2.5.0-alpha'
     testImplementation 'io.quarkus:quarkus-junit5'
-    testImplementation 'io.rest-assured:rest-assured'
+    testImplementation 'io.rest-assured:rest-assured:5.5.0'
 }
 
 group 'org.ikapiar'
