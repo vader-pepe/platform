@@ -1,60 +1,63 @@
-CREATE SEQUENCE IF NOT EXISTS Alumni_seq START WITH 1 INCREMENT BY 50;
-
-CREATE SEQUENCE IF NOT EXISTS Career_seq START WITH 1 INCREMENT BY 50;
-
-CREATE SEQUENCE IF NOT EXISTS Education_seq START WITH 1 INCREMENT BY 50;
-
-CREATE SEQUENCE IF NOT EXISTS MyEntity_seq START WITH 1 INCREMENT BY 50;
-
-CREATE SEQUENCE IF NOT EXISTS Skill_seq START WITH 1 INCREMENT BY 50;
-
 CREATE TABLE Alumni
 (
     id             BIGINT       NOT NULL,
     firstName      VARCHAR(255) NOT NULL,
     lastName       VARCHAR(255) NOT NULL,
     email          VARCHAR(255) NOT NULL,
-    phone          VARCHAR(255),
-    graduationYear INTEGER      NOT NULL,
-    birthDate      date,
-    gender         VARCHAR(255),
-    createdAt      TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    updatedAt      TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    phone          VARCHAR(255) NULL,
+    generation     INT          NOT NULL,
+    graduationYear INT          NOT NULL,
+    birthDate      date         NOT NULL,
+    gender         VARCHAR(255) NULL,
+    createdAt      datetime     NOT NULL,
+    updatedAt      datetime     NOT NULL,
     CONSTRAINT pk_alumni PRIMARY KEY (id)
 );
 
 CREATE TABLE Career
 (
-    id          BIGINT       NOT NULL,
-    alumni_id   BIGINT       NOT NULL,
-    companyName VARCHAR(255) NOT NULL,
-    jobTitle    VARCHAR(255) NOT NULL,
-    industry    VARCHAR(255),
-    description TEXT,
-    startDate   date         NOT NULL,
-    endDate     date,
-    isCurrent   BOOLEAN      NOT NULL,
+    id            BIGINT       NOT NULL,
+    alumni_id     BIGINT       NOT NULL,
+    companyName   VARCHAR(255) NOT NULL,
+    jobTitle      VARCHAR(255) NOT NULL,
+    industry      VARCHAR(255) NULL,
+    `description` TEXT NULL,
+    startDate     date         NOT NULL,
+    endDate       date NULL,
+    isCurrent     BIT(1)       NOT NULL,
     CONSTRAINT pk_career PRIMARY KEY (id)
 );
 
 CREATE TABLE Education
 (
     id              BIGINT NOT NULL,
-    alumni_id       BIGINT,
-    institutionName VARCHAR(255),
-    degreeShort     VARCHAR(255),
-    degreeLong      VARCHAR(255),
-    fieldOfStudy    VARCHAR(255),
-    startDate       date,
-    endDate         date,
+    alumni_id       BIGINT NULL,
+    institutionName VARCHAR(255) NULL,
+    degreeShort     VARCHAR(255) NULL,
+    degreeLong      VARCHAR(255) NULL,
+    fieldOfStudy    VARCHAR(255) NULL,
+    startDate       date NULL,
+    endDate         date NULL,
     CONSTRAINT pk_education PRIMARY KEY (id)
 );
 
-CREATE TABLE MyEntity
+CREATE TABLE Pengguna
 (
-    id    BIGINT NOT NULL,
-    field VARCHAR(255),
-    CONSTRAINT pk_myentity PRIMARY KEY (id)
+    id       BIGINT       NOT NULL,
+    username VARCHAR(255) NULL,
+    password VARCHAR(255) NULL,
+    peranan  VARCHAR(255) NULL,
+    email    VARCHAR(255) NOT NULL,
+    CONSTRAINT pk_pengguna PRIMARY KEY (id)
+);
+
+CREATE TABLE Persona
+(
+    id            BIGINT NOT NULL,
+    pengguna_id   BIGINT NULL,
+    identityToken VARCHAR(255) NULL,
+    source        VARCHAR(255) NULL,
+    CONSTRAINT pk_persona PRIMARY KEY (id)
 );
 
 CREATE TABLE Skill
@@ -87,6 +90,9 @@ ALTER TABLE Career
 
 ALTER TABLE Education
     ADD CONSTRAINT FK_EDUCATION_ON_ALUMNI FOREIGN KEY (alumni_id) REFERENCES Alumni (id);
+
+ALTER TABLE Persona
+    ADD CONSTRAINT FK_PERSONA_ON_PENGGUNA FOREIGN KEY (pengguna_id) REFERENCES Pengguna (id);
 
 ALTER TABLE alumni_skills
     ADD CONSTRAINT fk_aluski_on_alumni FOREIGN KEY (alumni_id) REFERENCES Alumni (id);

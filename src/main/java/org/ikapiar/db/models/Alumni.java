@@ -28,7 +28,14 @@ public class Alumni extends PanacheEntity {
 
     @NotNull
     @Column(nullable = false)
+    public int generation;
+
+    @NotNull
+    @Column(nullable = false)
     public int graduationYear;
+
+    @NotNull
+    @Column(nullable = false)
     public LocalDate birthDate;
 
     @Enumerated(EnumType.STRING)
