@@ -3,7 +3,7 @@ import {FC} from "react";
 export default async function Home() {
   return (
     <section className="flex w-full flex-col justify-center items-center">
-      <h1 className="text-5xl mb-20">Next.js + Encore Web App Starter</h1>
+      <h1 className="text-5xl mb-20">Next.js + Encore Web App</h1>
 
       <div className="grid grid-cols-4 max-w-6xl">
         <Card
