@@ -7,9 +7,12 @@
   "type": "module",
   "scripts": {
     "dev": "encore run",
-    "debug": "encore run --debug=break"
+    "debug": "encore run --debug=break",
+    "migrate": "npx knex migrate:latest --env=development --knexfile=./knexfile.cjs",
+    "migrate:staging": "npx knex migrate:latest --env=staging --knexfile=./knexfile.cjs"
   },
   "devDependencies": {
+    "sqlite3": "^5.1.7",
     "typescript": "^5.2.2"
   },
   "dependencies": {
