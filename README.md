@@ -8,7 +8,7 @@ To build a centralized platform for alumni data with easy access in mind, integr
 
 ## Project Structure
 
-This project used [Encore](https://encore.dev/) + [Next.js](https://nextjs.org/) project starter.
+This project used [NestJS](https://docs.nestjs.com/) + [Next.js](https://nextjs.org/) project starter.
 
 The backend code is in `backend`
 
