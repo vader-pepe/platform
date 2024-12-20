@@ -6,9 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "gen": "encore gen client ikapiar-platform-5bki --output=./app/lib/client.ts --env=local",
-    "gen:staging": "encore gen client ikapiar-platform-5bki --output=../frontend/app/lib/client.ts --env=staging"
+    "lint": "next lint"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.1",
