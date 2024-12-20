@@ -3,11 +3,16 @@ import { AppModule } from './app.module';
 import { getConfig } from './common/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { writeFileSync } from 'fs';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     const appPrefix = getConfig('API_VERSION');
     const appPort = getConfig('PORT');
+
+    app.setGlobalPrefix(appPrefix);
+
+    app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
     // setup swagger
     const swaggerOptions = new DocumentBuilder()
@@ -22,7 +27,6 @@ async function bootstrap() {
     );
     SwaggerModule.setup(`${appPrefix}/docs`, app, swaggerDocument);
 
-    app.setGlobalPrefix(appPrefix);
     await app.listen(appPort);
 }
 bootstrap();

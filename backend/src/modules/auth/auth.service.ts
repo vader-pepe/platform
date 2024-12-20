@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { getConfig } from '../../common/config';
+import { getConfig, PRIVATE_KEY } from '../../common/config';
 import { scryptSync } from 'crypto';
-import { SignJWT } from 'jose';
+import { SignJWT, importPKCS8 } from 'jose';
 import { Perhaps } from '../../common/utils/Perhaps.ts';
 import { Repository } from 'typeorm';
 import { User } from '../../common/db/entities/User.entity.ts';
@@ -38,10 +38,13 @@ export class AuthService {
             email: foundUser.email,
             roles: roles.map((role) => role.name),
         };
-        const jwtSecret = getConfig('JWT_SECRET');
-        const token = await new SignJWT(tokenBody).sign(
-            Buffer.from(jwtSecret, 'utf8')
-        );
+        const alg = getConfig('JWT_ALGORITHM');
+        const privateKey = await importPKCS8(PRIVATE_KEY.toString(), alg);
+        const token = await new SignJWT(tokenBody)
+            .setProtectedHeader({ alg })
+            .setIssuedAt()
+            .setExpirationTime(getConfig('JWT_EXPIRES_IN'))
+            .sign(privateKey);
         return Perhaps.Of(token);
     }
 

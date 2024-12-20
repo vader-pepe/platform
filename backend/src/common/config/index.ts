@@ -4,6 +4,7 @@ import type {
 } from '@nestjs/typeorm';
 import { join } from 'path';
 import { DataSource } from 'typeorm';
+import { readFileSync } from 'fs';
 
 export const AppEnvironments = [
     'development',
@@ -14,16 +15,20 @@ export type AppEnvironment = (typeof AppEnvironments)[number];
 
 export const AppConfigs = [
     {
-        key: 'JWT_SECRET',
-        defaultValue: 'gudang_garam',
-    },
-    {
         key: 'PASSWORD_SALT',
         defaultValue: 'gudang_garam',
     },
     {
         key: 'PASSWORD_HASHED_LENGTH',
         defaultValue: '32',
+    },
+    {
+        key: 'JWT_ALGORITHM',
+        defaultValue: 'RS256' as const,
+    },
+    {
+        key: 'JWT_EXPIRES_IN',
+        defaultValue: '24h',
     },
     {
         key: 'DB_URI',
@@ -93,6 +98,14 @@ export function generateOrmOptions(): TypeOrmModuleAsyncOptions {
         },
     };
 }
+
+export const PRIVATE_KEY = readFileSync(
+    join(process.cwd(), 'keypairs', 'private.pem')
+);
+
+export const PUBLIC_KEY = readFileSync(
+    join(process.cwd(), 'keypairs', 'public.pem')
+);
 
 export class ConfigNotFound extends Error {
     constructor(message: string) {

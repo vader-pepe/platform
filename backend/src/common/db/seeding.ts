@@ -30,7 +30,7 @@ export async function seedDB(dataSource = DATA_SOURCE_INSTANCE) {
         Number(getConfig('PASSWORD_HASHED_LENGTH'))
     ).toString('hex');
     const userSuperAdmin = await userRepository.save({
-        email: 'superadmin@localhost',
+        email: 'superadmin@localhost.com',
         password_hash: hashedPassword,
         roles: Promise.resolve([roleSuperAdmin]),
     });
