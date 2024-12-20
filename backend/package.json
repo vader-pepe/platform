@@ -6,7 +6,6 @@
   "license": "MPL-2.0",
   "type": "module",
   "scripts": {
-    "prebuild": "node -p \"'export const APP_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
     "build": "nest build",
     "start:dev": "bun --watch ./src/main.ts",
     "start:debug": "nest start --debug --watch",
@@ -23,14 +22,10 @@
     "globals": "^15.13.0",
     "prettier": "^3.4.2",
     "testcontainers": "^10.16.0",
-    "ts-node": "^10.9.2",
-    "ts-patch": "^3.3.0",
     "typescript": "^5.2.2",
     "typescript-eslint": "^8.18.1"
   },
   "dependencies": {
-    "@nestia/core": "^4.5.1",
-    "@nestia/sdk": "^4.5.1",
     "@nestjs/common": "^10.4.15",
     "@nestjs/core": "^10.4.15",
     "@nestjs/passport": "^10.0.3",
@@ -45,6 +40,6 @@
     "pg": "^8.13.1",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.20",
-    "typia": "^7.5.0"
+    "valibot": "^1.0.0-beta.9"
   }
 }

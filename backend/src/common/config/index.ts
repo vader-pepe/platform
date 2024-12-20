@@ -41,6 +41,14 @@ export const AppConfigs = [
         key: 'APP_ENV',
         defaultValue: process.env.NODE_ENV ?? ('development' as AppEnvironment),
     },
+    {
+        key: 'APP_VERSION',
+        defaultValue: (await import('../../../package.json')).version,
+    },
+    {
+        key: 'APP_DESCRIPTION',
+        defaultValue: (await import('../../../package.json')).description,
+    },
 ] as const;
 export type AppConfig = (typeof AppConfigs)[number];
 
