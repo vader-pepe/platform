@@ -2,9 +2,10 @@ import { Logger, Module, type OnApplicationBootstrap } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { generateOrmOptions, getConfig } from './common/config';
 import { seedDB } from './common/db/seeding.ts';
+import { AuthModule } from './modules/auth/auth.module.ts';
 
 @Module({
-    imports: [TypeOrmModule.forRootAsync(generateOrmOptions())],
+    imports: [TypeOrmModule.forRootAsync(generateOrmOptions()), AuthModule],
     controllers: [],
     providers: [],
 })

@@ -6,6 +6,7 @@ import { Perhaps } from '../../common/utils/Perhaps.ts';
 import { Repository } from 'typeorm';
 import { User } from '../../common/db/entities/User.entity.ts';
 import { InjectRepository } from '@nestjs/typeorm';
+import type { RoleName } from '../../common/db/entities/Role.entity.ts';
 
 @Injectable()
 export class AuthService {
@@ -33,7 +34,7 @@ export class AuthService {
         }
         const roles = await foundUser.roles;
         const tokenBody: UserToken = {
-            userID: foundUser.id,
+            id: foundUser.id,
             email: foundUser.email,
             roles: roles.map((role) => role.name),
         };
@@ -50,7 +51,7 @@ export class AuthService {
 }
 
 type UserToken = {
-    userID: string;
+    id: string;
     email: string;
-    roles: string[];
+    roles: RoleName[];
 };

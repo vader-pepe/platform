@@ -1,8 +1,8 @@
-import { Body, Controller, HttpException, Post, Res } from '@nestjs/common'
-import { ApiOperation } from '@nestjs/swagger'
-import type { LoginDto } from './auth.validations.ts'
-import type { AuthService } from './auth.service.ts'
-import type { Response } from 'express'
+import { Body, Controller, HttpException, Post, Res } from '@nestjs/common';
+import { ApiOperation } from '@nestjs/swagger';
+import type { LoginDto } from './auth.validations.ts';
+import { AuthService } from './auth.service.ts';
+import type { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -17,15 +17,15 @@ export class AuthController {
         const perhapsToken = await this.authService.localLogin(
             loginDto.email,
             loginDto.password
-        )
+        );
         if (perhapsToken.hasError()) {
-            throw new HttpException(perhapsToken.getError(), 403)
+            throw new HttpException(perhapsToken.getError(), 403);
         }
-        const token = perhapsToken.get()
+        const token = perhapsToken.get();
         res.setHeader(
             'set-cookie',
             `Authorization=Bearer ${token}; HttpOnly; Path=/;`
-        )
-        res.json({ token })
+        );
+        res.json({ token });
     }
 }
