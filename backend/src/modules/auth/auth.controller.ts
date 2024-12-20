@@ -14,7 +14,10 @@ export class AuthController {
             'Login with email and password. Returns set-cookie JWT token with user info (id, email, roles).',
     })
     @ApiBody({ type: LoginDto })
-    async localLogin(@Body() loginDto: LoginDto, @Res() res: Response) {
+    async localLogin(
+        @Body() loginDto: LoginDto,
+        @Res({ passthrough: true }) res: Response
+    ) {
         const perhapsToken = await this.authService.localLogin(
             loginDto.email,
             loginDto.password
@@ -23,10 +26,10 @@ export class AuthController {
             throw new HttpException(perhapsToken.getError().message, 403);
         }
         const token = perhapsToken.get();
-        res.setHeader(
-            'set-cookie',
-            `Authorization=Bearer ${token}; HttpOnly; Path=/;`
-        );
-        res.json({ token });
+        res.cookie('Authorization', `Bearer ${token}`, {
+            httpOnly: true,
+            path: '/',
+        });
+        return { token };
     }
 }
