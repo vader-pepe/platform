@@ -6,6 +6,12 @@ import { join } from 'path';
 import { DataSource } from 'typeorm';
 import { readFileSync } from 'fs';
 
+export const packageJSON = JSON.parse(
+    readFileSync(join(process.cwd(), 'package.json'), {
+        encoding: 'utf8',
+    })
+) as Record<string, string>;
+
 export const AppEnvironments = [
     'development',
     'staging',
@@ -48,11 +54,11 @@ export const AppConfigs = [
     },
     {
         key: 'APP_VERSION',
-        defaultValue: (await import('../../../package.json')).version,
+        defaultValue: packageJSON['version'],
     },
     {
         key: 'APP_DESCRIPTION',
-        defaultValue: (await import('../../../package.json')).description,
+        defaultValue: packageJSON['description'],
     },
 ] as const;
 export type AppConfig = (typeof AppConfigs)[number];
