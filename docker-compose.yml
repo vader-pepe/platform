@@ -1,11 +1,19 @@
 services:
   frontend:
     build:
-      context: ../frontend
+      context: ./frontend
       dockerfile: Dockerfile
-    container_name: frontend-container
+    container_name: ikapiar-frontend
     ports:
       - "3000:80" # Map local port 3000 to NGINX's port 80
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ikapiar-backend
+    ports:
+      - "4000:4000"
 
   database:
     image: postgres:15-alpine
@@ -18,6 +26,6 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - ikapiar-db:/var/lib/postgresql/data
 volumes:
-  postgres-data:
+  ikapiar-db:
