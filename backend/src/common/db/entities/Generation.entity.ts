@@ -9,7 +9,7 @@ export class Generation {
     @Column()
     name!: string;
 
-    @Column({ type: 'year' })
+    @Column()
     entryYear!: number;
 
     @OneToMany(() => Alumnus, (alumnus) => alumnus.generation)

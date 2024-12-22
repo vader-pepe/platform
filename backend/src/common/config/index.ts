@@ -38,7 +38,7 @@ export const AppConfigs = [
     },
     {
         key: 'DB_URI',
-        defaultValue: 'postgresql://postgres:postgres@localhost:5432/postgres',
+        defaultValue: 'postgresql://postgres:postgres@postgres:5432/postgres',
     },
     {
         key: 'PORT',
