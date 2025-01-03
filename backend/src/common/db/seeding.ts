@@ -12,15 +12,12 @@ export async function seedDB(dataSource = DATA_SOURCE_INSTANCE) {
     const roleSuperAdmin = await roleRepository.save({
         name: 'SUPER_ADMIN',
     });
-    /*const roleAdmin = await roleRepository.save({
+    const roleAdmin = await roleRepository.save({
         name: 'ADMIN',
     });
-    const roleAlumni = await roleRepository.save({
+    await roleRepository.save({
         name: 'ALUMNI',
     });
-    const roleEveryone = await roleRepository.save({
-        name: 'EVERYONE',
-    });*/
 
     const userRepository = dataSource.getRepository(User);
     const password = 'password';
@@ -33,12 +30,37 @@ export async function seedDB(dataSource = DATA_SOURCE_INSTANCE) {
         email: 'superadmin@localhost.com',
         password_hash: hashedPassword,
         roles: Promise.resolve([roleSuperAdmin]),
+        state: 'active',
+    });
+
+    const userAdmin = await userRepository.save({
+        email: 'admin@localhost.com',
+        password_hash: hashedPassword,
+        roles: Promise.resolve([roleAdmin]),
+        state: 'active',
+    });
+
+    const userPending = await userRepository.save({
+        email: 'pending@localhost.com',
+        password_hash: hashedPassword,
+        roles: Promise.resolve([]),
+        state: 'pending_approval',
     });
 
     const auditRepository = dataSource.getRepository(Audit);
     await auditRepository.save({
         action: 'CREATE_USER',
         user_id: userSuperAdmin.id,
+        time: new Date(),
+    });
+    await auditRepository.save({
+        action: 'CREATE_USER',
+        user_id: userAdmin.id,
+        time: new Date(),
+    });
+    await auditRepository.save({
+        action: 'CREATE_USER',
+        user_id: userPending.id,
         time: new Date(),
     });
     logger.log('Seeding done');

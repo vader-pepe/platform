@@ -23,6 +23,11 @@ export class AuthService {
         if (!foundUser) {
             return Perhaps.OfError(new Error('invalid credentials'));
         }
+        if (foundUser.state !== 'active') {
+            return Perhaps.OfError(
+                new Error('user is inactive. state: ' + foundUser.state)
+            );
+        }
         const hashLength = parseInt(getConfig('PASSWORD_HASHED_LENGTH'));
         const salt = getConfig('PASSWORD_SALT');
         const hashedPassword = scryptSync(password, salt, hashLength).toString(

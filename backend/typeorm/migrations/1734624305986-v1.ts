@@ -21,6 +21,7 @@ export class V1_1734624305986 implements MigrationInterface {
                             'SELF_UPDATE',
                             'SELF_DELETE',
                             'CREATE_USER',
+                            'APPROVE_USER',
                         ],
                     },
                     { name: 'user_id', type: 'uuid' },
@@ -42,7 +43,17 @@ export class V1_1734624305986 implements MigrationInterface {
                         generationStrategy: 'uuid',
                     },
                     { name: 'email', type: 'varchar', isUnique: true },
-                    { name: 'password_hash', type: 'text' },
+                    { name: 'password_hash', type: 'text', isNullable: true },
+                    {
+                        name: 'state',
+                        type: 'enum',
+                        enum: [
+                            'active',
+                            'pending_approval',
+                            'deleted',
+                            'blocked',
+                        ],
+                    },
                     {
                         name: 'created_at',
                         type: 'timestamp',

@@ -12,6 +12,14 @@ import {
 import { Role } from './Role.entity.ts';
 import { Identity } from './Identity.entity.ts';
 
+export const UserStates = [
+    'active',
+    'pending_approval',
+    'deleted',
+    'blocked',
+] as const;
+export type UserState = (typeof UserStates)[number];
+
 @Entity()
 export class User {
     @PrimaryGeneratedColumn('uuid')
@@ -20,8 +28,8 @@ export class User {
     @Column()
     email!: string;
 
-    @Column()
-    password_hash!: string; // User's hashed password
+    @Column({ nullable: true })
+    password_hash?: string | undefined; // User's hashed password
 
     @ManyToMany(() => Role, (role) => role.users)
     @JoinTable()
@@ -29,6 +37,9 @@ export class User {
 
     @OneToMany(() => Identity, (identity) => identity.user)
     identities!: Promise<Identity[]>;
+
+    @Column({ enum: UserStates, type: 'enum' })
+    state!: UserState;
 
     @CreateDateColumn()
     created_at!: Date; // Record creation timestamp
