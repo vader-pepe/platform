@@ -7,7 +7,19 @@ import { writeFileSync } from 'fs';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule, {
+        cors: {
+            origin: [
+                'localhost',
+                '127.0.0.1',
+                'ikapiar.my.id',
+                'back.ikapiar.my.id',
+            ],
+            methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+            allowedHeaders: '*',
+            exposedHeaders: ['x-correlation-id'],
+        },
+    });
     const appPrefix = getConfig('API_VERSION');
     const appPort = getConfig('PORT');
 
