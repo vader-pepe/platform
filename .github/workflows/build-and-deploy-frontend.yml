@@ -1,0 +1,46 @@
+name: Build and Deploy Frontend
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Set up Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18 # Adjust based on your project requirements
+
+      # Install dependencies and build frontend
+      - name: Install and Build Frontend
+        working-directory: ./frontend
+        run: |
+          npm install
+          npm run build
+          npm run export
+
+      # Deploy built static files using rsync
+      - name: Deploy Frontend to Server
+        env:
+          HOSTNAME: ${{ secrets.HOSTNAME }}
+          PORT: ${{ secrets.PORT }}
+          KEY: ${{ secrets.KEY }}
+        run: |
+          # Save SSH key to a temporary file
+          echo "$KEY" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+          
+          # Use rsync to deploy static files
+          rsync -avz -e "ssh -p $PORT -i /tmp/deploy_key" ./frontend/out/ "root@$HOSTNAME:/var/www/ikapiar"
+          
+          # Clean up the temporary key
+          rm -f /tmp/deploy_key
