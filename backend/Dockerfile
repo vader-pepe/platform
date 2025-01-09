@@ -38,3 +38,7 @@ RUN chown -R bun:bun /usr/src/app
 USER bun
 EXPOSE 4000/tcp
 ENTRYPOINT [ "bun", "run", "src/main.ts" ]
+
+LABEL org.opencontainers.image.source=https://github.com/ikapiar/platform
+LABEL org.opencontainers.image.description="IKAPIAR Web Backends"
+LABEL org.opencontainers.image.licenses=MIT

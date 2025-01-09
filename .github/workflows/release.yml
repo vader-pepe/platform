@@ -88,7 +88,7 @@ jobs:
           chmod 600 /tmp/deploy_key
           
           # Use rsync to deploy static files
-          rsync -avz -e "ssh -p $PORT -i /tmp/deploy_key" ./frontend/out/ "$USERNAME@$HOSTNAME:/var/www/ikapiar"
+          rsync -avz -e "ssh -p $PORT -i /tmp/deploy_key -o StrictHostKeyChecking=no" ./frontend/out/ "$USERNAME@$HOSTNAME:/var/www/ikapiar"
           
           # Clean up the temporary key
           rm -f /tmp/deploy_key
