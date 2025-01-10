@@ -55,7 +55,7 @@ jobs:
           echo JWT_PUBLIC_KEY_BASE64="$JWT_PUBLIC_KEY_BASE64" >> "$APP_ENV_FILE_PATH"
           echo PASSWORD_SALT="$PASSWORD_SALT" >> "$APP_ENV_FILE_PATH"
 
-      - name: Sync Systemd Unit Backend
+      - name: Sync deploy files Backend
         working-directory: ./backend
         env:
           HOSTNAME: ${{ secrets.HOSTNAME }}
@@ -73,7 +73,7 @@ jobs:
           # Clean up the temporary key
           rm -f /tmp/deploy_key
 
-      - name: Restart Systemd Unit Backend
+      - name: Run backend
         env:
           HOSTNAME: ${{ secrets.HOSTNAME }}
           PORT: ${{ secrets.PORT }}
@@ -84,7 +84,7 @@ jobs:
           echo "$KEY" > /tmp/deploy_key
           chmod 600 /tmp/deploy_key
 
-          ssh -p $PORT -i /tmp/deploy_key -o StrictHostKeyChecking=no $USERNAME@$HOSTNAME "/bin/bash /apps/ikapiar-backend/container-ikapiar-pre.sh && sudo systemctl daemon-reload && sudo systemctl stop container-ikapiar-backend && sudo systemctl enable --now container-ikapiar-backend"
+          ssh -p $PORT -i /tmp/deploy_key -o StrictHostKeyChecking=no $USERNAME@$HOSTNAME "chmod +x /apps/ikapiar-backend/container-ikapiar.sh && /apps/ikapiar-backend/container-ikapiar.sh"
 
           # Clean up the temporary key
           rm -f /tmp/deploy_key
