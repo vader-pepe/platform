@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { getConfig, PRIVATE_KEY } from '../../common/config';
+import { Injectable, Logger } from '@nestjs/common';
+import { getConfig, PRIVATE_KEY_DEFAULT_BASE64 } from '../../common/config';
 import { scryptSync } from 'crypto';
 import { SignJWT, importPKCS8 } from 'jose';
 import { Perhaps } from '../../common/utils/Perhaps.ts';
@@ -10,10 +10,30 @@ import type { RoleName } from '../../common/db/entities/Role.entity.ts';
 
 @Injectable()
 export class AuthService {
+    static jwtPrivateKey = Buffer.from(
+        getConfig('JWT_PRIVATE_KEY_BASE64'),
+        'base64'
+    ).toString('ascii');
+    static jwtPublicKey = Buffer.from(
+        getConfig('JWT_PUBLIC_KEY_BASE64'),
+        'base64'
+    ).toString('ascii');
+
+    logger = new Logger(AuthService.name);
+
     constructor(
         @InjectRepository(User)
         private readonly userRepo: Repository<User>
-    ) {}
+    ) {
+        if (
+            AuthService.jwtPrivateKey === PRIVATE_KEY_DEFAULT_BASE64 &&
+            getConfig('APP_ENV') !== 'development'
+        ) {
+            this.logger.warn(
+                'APP IS USING DEFAULT JWT KEY WHILE NOT IN DEV MODE!!! Set env var JWT_PRIVATE_KEY_BASE64 and JWT_PUBLIC_KEY_BASE64'
+            );
+        }
+    }
 
     async localLogin(
         email: string,
@@ -44,7 +64,7 @@ export class AuthService {
             roles: roles.map((role) => role.name),
         };
         const alg = getConfig('JWT_ALGORITHM');
-        const privateKey = await importPKCS8(PRIVATE_KEY.toString(), alg);
+        const privateKey = await importPKCS8(AuthService.jwtPrivateKey, alg);
         const token = await new SignJWT(tokenBody)
             .setProtectedHeader({ alg })
             .setIssuedAt()
