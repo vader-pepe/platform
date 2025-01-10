@@ -38,6 +38,56 @@ jobs:
           # Push the Docker image
           docker push ghcr.io/ikapiar/backend:${VERSION}
           docker push ghcr.io/ikapiar/backend:latest
+
+      - name: Populate Env for backend
+        env:
+          APP_ENV: production
+          DB_URI: ${{ secrets.DB_URI }}
+          JWT_PRIVATE_KEY_BASE64: ${{ secrets.JWT_PRIVATE_KEY_BASE64 }}
+          JWT_PUBLIC_KEY_BASE64: ${{ secrets.JWT_PUBLIC_KEY_BASE64 }}
+          PASSWORD_SALT: ${{ secrets.PASSWORD_SALT }}
+          APP_ENV_FILE_PATH: ./backend/deploy/env
+        run: |
+          echo APP_ENV="$APP_ENV" > "$APP_ENV_FILE_PATH"
+          echo DB_URI="DB_URI" > "$APP_ENV_FILE_PATH"
+          echo JWT_PRIVATE_KEY_BASE64="JWT_PRIVATE_KEY_BASE64" > "$APP_ENV_FILE_PATH"
+          echo JWT_PUBLIC_KEY_BASE64="JWT_PUBLIC_KEY_BASE64" > "$APP_ENV_FILE_PATH"
+          echo PASSWORD_SALT="PASSWORD_SALT" > "$APP_ENV_FILE_PATH"
+
+      - name: Sync Systemd Unit Backend
+        working-directory: ./backend
+        env:
+          HOSTNAME: ${{ secrets.HOSTNAME }}
+          PORT: ${{ secrets.PORT }}
+          KEY: ${{ secrets.KEY }}
+          USERNAME: ${{ secrets.USERNAME }}
+        run: |
+          # Save SSH key to a temporary file
+          echo "$KEY" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+
+          # Use rsync to deploy static files
+          rsync -avz -e "ssh -p $PORT -i /tmp/deploy_key -o StrictHostKeyChecking=no" ./deploy "$USERNAME@$HOSTNAME:/apps/ikapiar-backend"
+
+          # Clean up the temporary key
+          rm -f /tmp/deploy_key
+
+      - name: Restart Systemd Unit Backend
+        env:
+          HOSTNAME: ${{ secrets.HOSTNAME }}
+          PORT: ${{ secrets.PORT }}
+          KEY: ${{ secrets.KEY }}
+          USERNAME: ${{ secrets.USERNAME }}
+        run: |
+          # Save SSH key to a temporary file
+          echo "$KEY" > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+
+          ssh -p $PORT -i /tmp/deploy_key -o StrictHostKeyChecking=no $USERNAME@$HOSTNAME "sudo systemctl deamon-reload && sudo systemctl stop container-ikapiar-backend && sudo systemctl enable --now container-ikapiar-backend"
+
+          # Clean up the temporary key
+          rm -f /tmp/deploy_key
+
   build-and-deploy-frontend:
     runs-on: ubuntu-latest
 

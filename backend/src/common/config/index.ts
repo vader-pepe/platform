@@ -57,6 +57,10 @@ export const AppConfigs = [
         defaultValue: 'postgresql://postgres:postgres@postgres:5432/postgres',
     },
     {
+        key: 'SUDO_TOKEN',
+        defaultValue: 'sipalingsudo',
+    },
+    {
         key: 'PORT',
         defaultValue: '4000',
     },
