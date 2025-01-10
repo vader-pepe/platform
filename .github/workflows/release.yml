@@ -84,7 +84,7 @@ jobs:
           echo "$KEY" > /tmp/deploy_key
           chmod 600 /tmp/deploy_key
 
-          ssh -p $PORT -i /tmp/deploy_key -o StrictHostKeyChecking=no $USERNAME@$HOSTNAME "sudo systemctl daemon-reload && sudo systemctl stop container-ikapiar-backend && sudo systemctl enable --now container-ikapiar-backend"
+          ssh -p $PORT -i /tmp/deploy_key -o StrictHostKeyChecking=no $USERNAME@$HOSTNAME "/bin/bash /apps/ikapiar-backend/container-ikapiar-pre.sh && sudo systemctl daemon-reload && sudo systemctl stop container-ikapiar-backend && sudo systemctl enable --now container-ikapiar-backend"
 
           # Clean up the temporary key
           rm -f /tmp/deploy_key

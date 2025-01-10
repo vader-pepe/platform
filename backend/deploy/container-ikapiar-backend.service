@@ -8,7 +8,6 @@ After=network-online.target
 Environment=PODMAN_SYSTEMD_UNIT=%n
 Restart=on-failure
 TimeoutStopSec=70
-ExecStartPre=/bin/bash /apps/ikapiar-backend/container-ikapiar-pre.sh
 ExecStart=/usr/bin/podman start ikapiar-backend
 ExecStop=/usr/bin/podman stop -t 10 ikapiar-backend
 ExecStopPost=/usr/bin/podman stop -t 10 ikapiar-backend
