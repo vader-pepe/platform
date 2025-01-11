@@ -101,6 +101,7 @@ export function generateOrmOptions(): TypeOrmModuleAsyncOptions {
     let ormOptions: TypeOrmModuleOptions = {
         type: 'postgres',
         url: getConfig('DB_URI'),
+        entities: [join(process.cwd(), '/src/**/*.entity{.ts,.js}')],
     };
     if (getConfig('APP_ENV') === 'development') {
         ormOptions = {
@@ -109,7 +110,6 @@ export function generateOrmOptions(): TypeOrmModuleAsyncOptions {
             synchronize: true,
             migrationsRun: true,
             migrations: [join(process.cwd(), '/typeorm/migrations/*{.ts,.js}')],
-            entities: [join(process.cwd(), '/src/**/*.entity{.ts,.js}')],
         };
     }
     return {
