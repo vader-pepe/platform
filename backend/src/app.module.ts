@@ -4,11 +4,13 @@ import { generateOrmOptions, getConfig } from './common/config';
 import { seedDB } from './common/db/seeding.ts';
 import { AuthModule } from './modules/auth/auth.module.ts';
 import { UserModule } from './modules/user/user.module.ts';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { AuthMiddleware } from './common/middlewares/auth.ts';
+import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup';
 
 @Module({
     imports: [
+        SentryModule.forRoot(),
         TypeOrmModule.forRootAsync(generateOrmOptions()),
         AuthModule,
         UserModule,
@@ -18,6 +20,10 @@ import { AuthMiddleware } from './common/middlewares/auth.ts';
         {
             provide: APP_GUARD,
             useClass: AuthMiddleware,
+        },
+        {
+            provide: APP_FILTER,
+            useClass: SentryGlobalFilter,
         },
     ],
 })

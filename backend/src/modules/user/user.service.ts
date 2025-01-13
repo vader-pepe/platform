@@ -47,6 +47,14 @@ export class UserService {
         email: string;
         password: string;
     }): Promise<string> {
+        const foundUser = await this.userRepo.findOne({
+            where: { email: newUser.email },
+        });
+        if (foundUser) {
+            throw new UserAlreadyExist(
+                `User with email ${newUser.email} already exists`
+            );
+        }
         const { email, password } = newUser;
         const user = new User();
         user.email = email;
@@ -81,6 +89,11 @@ export class UserService {
 }
 
 export class UserNotFound extends Error {
+    constructor(message: string) {
+        super(message);
+    }
+}
+export class UserAlreadyExist extends Error {
     constructor(message: string) {
         super(message);
     }

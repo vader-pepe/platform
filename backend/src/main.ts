@@ -7,8 +7,10 @@ import { writeFileSync } from 'fs';
 import { ValidationPipe } from '@nestjs/common';
 import {
     AuthorizationExceptionFilter,
+    BadRequestExceptionFilter,
     EntityNotFoundExceptionFilter,
 } from './common/middlewares/errors.ts';
+import { initSentry } from './instrument.ts';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -19,9 +21,12 @@ async function bootstrap() {
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
     app.useGlobalFilters(
         new EntityNotFoundExceptionFilter(),
-        new AuthorizationExceptionFilter()
+        new AuthorizationExceptionFilter(),
+        new BadRequestExceptionFilter()
     );
     app.use(cookieParser());
+
+    initSentry();
 
     // setup swagger
     const swaggerOptions = new DocumentBuilder()

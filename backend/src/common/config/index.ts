@@ -61,6 +61,18 @@ export const AppConfigs = [
         defaultValue: 'sipalingsudo',
     },
     {
+        key: 'MAILER_API_KEY',
+        defaultValue: 'GANTII',
+    },
+    {
+        key: 'MAILER_FROM',
+        defaultValue: 'GANTII',
+    },
+    {
+        key: 'SENTRY_DSN',
+        defaultValue: 'GANTII',
+    },
+    {
         key: 'PORT',
         defaultValue: '4000',
     },

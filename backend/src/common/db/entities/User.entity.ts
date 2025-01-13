@@ -31,13 +31,13 @@ export class User {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 
-    @Column()
+    @Column({ unique: true })
     email!: string;
 
     @Column({ nullable: true, type: 'text' })
     password_hash?: string | undefined; // User's hashed password
 
-    @Column({ enum: Roles, type: 'text' })
+    @Column({ type: 'text' })
     roles!: string; // A user can have 0 or more roles
 
     @OneToMany(() => Identity, (identity) => identity.user)
@@ -46,7 +46,7 @@ export class User {
     @Column({ enum: UserStates, type: 'enum' })
     state!: UserState;
 
-    @CreateDateColumn({ default: new Date() })
+    @CreateDateColumn()
     created_at!: Date; // Record creation timestamp
 
     @UpdateDateColumn()
