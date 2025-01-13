@@ -1,23 +1,12 @@
 import { DATA_SOURCE_INSTANCE, getConfig } from '../config';
-import { User } from './entities/User.entity.ts';
+import { rolesToCSV, User } from './entities/User.entity.ts';
 import { scryptSync } from 'crypto';
-import { Role } from './entities/Role.entity.ts';
 import { Audit } from './entities/Audit.entity.ts';
 import { Logger } from '@nestjs/common';
 
 export async function seedDB(dataSource = DATA_SOURCE_INSTANCE) {
     const logger = new Logger('Seeding');
     logger.log('Seeding started');
-    const roleRepository = dataSource.getRepository(Role);
-    const roleSuperAdmin = await roleRepository.save({
-        name: 'SUPER_ADMIN',
-    });
-    const roleAdmin = await roleRepository.save({
-        name: 'ADMIN',
-    });
-    await roleRepository.save({
-        name: 'ALUMNI',
-    });
 
     const userRepository = dataSource.getRepository(User);
     const password = 'password';
@@ -29,21 +18,21 @@ export async function seedDB(dataSource = DATA_SOURCE_INSTANCE) {
     const userSuperAdmin = await userRepository.save({
         email: 'superadmin@localhost.com',
         password_hash: hashedPassword,
-        roles: Promise.resolve([roleSuperAdmin]),
+        roles: rolesToCSV(['SUPER_ADMIN']),
         state: 'active',
     });
 
     const userAdmin = await userRepository.save({
         email: 'admin@localhost.com',
         password_hash: hashedPassword,
-        roles: Promise.resolve([roleAdmin]),
+        roles: rolesToCSV(['ADMIN']),
         state: 'active',
     });
 
     const userPending = await userRepository.save({
         email: 'pending@localhost.com',
         password_hash: hashedPassword,
-        roles: Promise.resolve([]),
+        roles: rolesToCSV(['EVERYONE']),
         state: 'pending_approval',
     });
 

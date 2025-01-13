@@ -5,26 +5,22 @@ import { getConfig } from './common/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { writeFileSync } from 'fs';
 import { ValidationPipe } from '@nestjs/common';
+import {
+    AuthorizationExceptionFilter,
+    EntityNotFoundExceptionFilter,
+} from './common/middlewares/errors.ts';
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule, {
-        cors: {
-            origin: [
-                'localhost',
-                '127.0.0.1',
-                'ikapiar.my.id',
-                'back.ikapiar.my.id',
-            ],
-            methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
-            allowedHeaders: '*',
-            exposedHeaders: ['x-correlation-id'],
-        },
-    });
+    const app = await NestFactory.create(AppModule);
     const appPrefix = getConfig('API_VERSION');
     const appPort = getConfig('PORT');
 
     app.setGlobalPrefix(appPrefix);
     app.useGlobalPipes(new ValidationPipe({ transform: true }));
+    app.useGlobalFilters(
+        new EntityNotFoundExceptionFilter(),
+        new AuthorizationExceptionFilter()
+    );
     app.use(cookieParser());
 
     // setup swagger
@@ -32,6 +28,7 @@ async function bootstrap() {
         .setTitle('Platform API')
         .setDescription(getConfig('APP_DESCRIPTION'))
         .setVersion(getConfig('APP_VERSION'))
+        .addBearerAuth()
         .build();
     const swaggerDocument = SwaggerModule.createDocument(app, swaggerOptions);
     writeFileSync(

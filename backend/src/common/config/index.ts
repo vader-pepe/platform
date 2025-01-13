@@ -54,7 +54,7 @@ export const AppConfigs = [
     },
     {
         key: 'DB_URI',
-        defaultValue: 'postgresql://postgres:postgres@postgres:5432/postgres',
+        defaultValue: 'postgresql://postgres:postgres@127.0.0.1:5432/postgres',
     },
     {
         key: 'SUDO_TOKEN',
@@ -109,7 +109,7 @@ export function generateOrmOptions(): TypeOrmModuleAsyncOptions {
             dropSchema: true,
             synchronize: true,
             migrationsRun: true,
-            migrations: [join(process.cwd(), '/typeorm/migrations/*{.ts,.js}')],
+            migrations: [join(process.cwd(), '/typeorm/*{.ts}')],
         };
     }
     return {

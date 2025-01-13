@@ -3,13 +3,10 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
-    JoinTable,
-    ManyToMany,
     OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { Role } from './Role.entity.ts';
 import { Identity } from './Identity.entity.ts';
 
 export const UserStates = [
@@ -20,6 +17,15 @@ export const UserStates = [
 ] as const;
 export type UserState = (typeof UserStates)[number];
 
+export const Roles = ['EVERYONE', 'ADMIN', 'SUPER_ADMIN', 'ALUMNI'] as const;
+export type Role = (typeof Roles)[number];
+export function rolesToCSV(roles: Role[]): string {
+    return roles.sort().join(',');
+}
+export function csvToRoles(csv: string): Role[] {
+    return csv.split(',').sort() as Role[];
+}
+
 @Entity()
 export class User {
     @PrimaryGeneratedColumn('uuid')
@@ -28,12 +34,11 @@ export class User {
     @Column()
     email!: string;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, type: 'text' })
     password_hash?: string | undefined; // User's hashed password
 
-    @ManyToMany(() => Role, (role) => role.users)
-    @JoinTable()
-    roles!: Promise<Role[]>; // A user can have 0 or more roles
+    @Column({ enum: Roles, type: 'text' })
+    roles!: string; // A user can have 0 or more roles
 
     @OneToMany(() => Identity, (identity) => identity.user)
     identities!: Promise<Identity[]>;
@@ -41,7 +46,7 @@ export class User {
     @Column({ enum: UserStates, type: 'enum' })
     state!: UserState;
 
-    @CreateDateColumn()
+    @CreateDateColumn({ default: new Date() })
     created_at!: Date; // Record creation timestamp
 
     @UpdateDateColumn()

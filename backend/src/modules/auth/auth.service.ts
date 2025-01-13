@@ -1,24 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { getConfig, PRIVATE_KEY_DEFAULT_BASE64 } from '../../common/config';
-import { scryptSync } from 'crypto';
-import { SignJWT, importPKCS8 } from 'jose';
+import { SignJWT } from 'jose';
 import { Perhaps } from '../../common/utils/Perhaps.ts';
 import { Repository } from 'typeorm';
-import { User } from '../../common/db/entities/User.entity.ts';
+import { csvToRoles, User } from '../../common/db/entities/User.entity.ts';
 import { InjectRepository } from '@nestjs/typeorm';
-import type { RoleName } from '../../common/db/entities/Role.entity.ts';
+import {
+    generatePasswordHash,
+    JWTPrivateKey,
+    JWTPrivatePKCS8,
+    type UserToken,
+} from '../../common/utils/sandi.ts';
 
 @Injectable()
 export class AuthService {
-    static jwtPrivateKey = Buffer.from(
-        getConfig('JWT_PRIVATE_KEY_BASE64'),
-        'base64'
-    ).toString('ascii');
-    static jwtPublicKey = Buffer.from(
-        getConfig('JWT_PUBLIC_KEY_BASE64'),
-        'base64'
-    ).toString('ascii');
-
     logger = new Logger(AuthService.name);
 
     constructor(
@@ -26,7 +21,7 @@ export class AuthService {
         private readonly userRepo: Repository<User>
     ) {
         if (
-            AuthService.jwtPrivateKey === PRIVATE_KEY_DEFAULT_BASE64 &&
+            JWTPrivateKey === PRIVATE_KEY_DEFAULT_BASE64 &&
             getConfig('APP_ENV') !== 'development'
         ) {
             this.logger.warn(
@@ -48,28 +43,23 @@ export class AuthService {
                 new Error('user is inactive. state: ' + foundUser.state)
             );
         }
-        const hashLength = parseInt(getConfig('PASSWORD_HASHED_LENGTH'));
-        const salt = getConfig('PASSWORD_SALT');
-        const hashedPassword = scryptSync(password, salt, hashLength).toString(
-            'hex'
-        );
+        const hashedPassword = generatePasswordHash(password);
         const isPasswordMatch = foundUser.password_hash === hashedPassword;
         if (!isPasswordMatch) {
             return Perhaps.OfError(new Error('invalid credentials'));
         }
-        const roles = await foundUser.roles;
+        const roles = csvToRoles(foundUser.roles);
         const tokenBody: UserToken = {
             id: foundUser.id,
             email: foundUser.email,
-            roles: roles.map((role) => role.name),
+            roles,
         };
         const alg = getConfig('JWT_ALGORITHM');
-        const privateKey = await importPKCS8(AuthService.jwtPrivateKey, alg);
         const token = await new SignJWT(tokenBody)
             .setProtectedHeader({ alg })
             .setIssuedAt()
             .setExpirationTime(getConfig('JWT_EXPIRES_IN'))
-            .sign(privateKey);
+            .sign(JWTPrivatePKCS8);
         return Perhaps.Of(token);
     }
 
@@ -77,9 +67,3 @@ export class AuthService {
 
     async linkedInLogin() {}
 }
-
-type UserToken = {
-    id: string;
-    email: string;
-    roles: RoleName[];
-};
