@@ -55,7 +55,7 @@ jobs:
           echo JWT_PRIVATE_KEY_BASE64="$JWT_PRIVATE_KEY_BASE64" >> "$APP_ENV_FILE_PATH"
           echo JWT_PUBLIC_KEY_BASE64="$JWT_PUBLIC_KEY_BASE64" >> "$APP_ENV_FILE_PATH"
           echo PASSWORD_SALT="$PASSWORD_SALT" >> "$APP_ENV_FILE_PATH"
-          echo SUDO_TOKEN="SUDO_TOKEN" >> "$APP_ENV_FILE_PATH"
+          echo SUDO_TOKEN="$SUDO_TOKEN" >> "$APP_ENV_FILE_PATH"
 
       - name: Sync deploy files Backend
         working-directory: ./backend
