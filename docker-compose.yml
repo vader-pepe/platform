@@ -1,40 +1,52 @@
 services:
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: ikapiar-frontend
-    ports:
-      - "3000:80" # Map local port 3000 to NGINX's port 80
-    networks:
-      - ikapiar-network
+    frontend:
+        profiles: ["frontend"]
+        build:
+            context: ./frontend
+            dockerfile: ${DOCKERFILE:-Dockerfile}
+        environment:
+            - NEXT_PUBLIC_API_BASE_URL=https://ikapiar.my.id # Adjust this URL according to your API service
+        container_name: ikapiar-frontend
+        ports:
+            - "3000:3000" # Map local port 3000 to NGINX's port 80
+        networks:
+            - ikapiar-network
+        develop:
+            watch:
+                - path: ./frontend
+                  target: /app
+                  action: sync+restart
 
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: ikapiar-backend
-    ports:
-      - "4000:4000"
-    networks:
-      - ikapiar-network
+    backend:
+        profiles: ["backend"]
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        container_name: ikapiar-backend
+        ports:
+            - "4000:4000"
+        networks:
+            - ikapiar-network
 
-  database:
-    image: postgres:15-alpine
-    container_name: postgres-container
-    hostname: postgres
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - ikapiar-db:/var/lib/postgresql/data
-    networks:
-      - ikapiar-network
+    database:
+        profiles:
+            - database
+            - backend
+        image: postgres:15-alpine
+        container_name: postgres-container
+        hostname: postgres
+        restart: always
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: postgres
+        ports:
+            - "5432:5432"
+        volumes:
+            - ikapiar-db:/var/lib/postgresql/data
+        networks:
+            - ikapiar-network
 volumes:
-  ikapiar-db:
+    ikapiar-db:
 networks:
-  ikapiar-network:
+    ikapiar-network:
