@@ -95,8 +95,8 @@ export default function Home() {
           />
           Go to nextjs.org →
         </a>
-        <a href="https://assets.ikapiar.my.id/LEGAL.md">Privacy Policy</a>
-        <a href="https://assets.ikapiar.my.id/LEGAL.md">Terms of Service</a>
+        <a href="https://assets.ikapiar.my.id/legal.html">Privacy Policy</a>
+        <a href="https://assets.ikapiar.my.id/legal.html">Terms of Service</a>
       </footer>
     </div>
   );
