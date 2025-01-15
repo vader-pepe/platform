@@ -1,32 +1,31 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 // List of public paths that don't require authentication
-const publicPaths = ['/login', '/signup']
+const publicPaths = ["/login", "/signup"];
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get('token')?.value
-  const { pathname } = request.nextUrl
+  const token = request.cookies.get("token")?.value;
+  const { pathname } = request.nextUrl;
 
   // Allow access to public paths
   if (publicPaths.includes(pathname)) {
     // If user is already authenticated and tries to access login/signup,
     // redirect to dashboard
     if (token) {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+      return NextResponse.redirect(new URL("/dashboard", request.url));
     }
-    return NextResponse.next()
+    return NextResponse.next();
   }
 
   // Check if user is authenticated for protected routes
   if (!token) {
     // Redirect to login if not authenticated
-    const loginUrl = new URL('/login', request.url)
-    loginUrl.searchParams.set('from', pathname)
-    return NextResponse.redirect(loginUrl)
+    const loginUrl = new URL("/login", request.url);
+    return NextResponse.redirect(loginUrl);
   }
 
-  return NextResponse.next()
+  return NextResponse.next();
 }
 
 export const config = {
@@ -40,6 +39,6 @@ export const config = {
      * 4. /_vercel (Vercel internals)
      * 5. Static files (favicon.ico, manifest.json, etc.)
      */
-    '/((?!api|_next|_static|_vercel|[\\w-]+\\.\\w+).*)',
+    "/((?!api|_next|_static|_vercel|[\\w-]+\\.\\w+).*)",
   ],
-}
+};

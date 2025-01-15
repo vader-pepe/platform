@@ -1,11 +1,12 @@
 import { LoginResponse } from "@/types";
+import { fetchApi } from "../lib/api";
 
 export const loginUser = async (credentials: {
     email: string;
     password: string;
 }): Promise<LoginResponse> => {
     try {
-        const response = await fetch("/api/auth/login", {
+        const response = await fetchApi("/v1/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

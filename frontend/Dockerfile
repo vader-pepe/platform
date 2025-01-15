@@ -1,13 +1,15 @@
-# build environment
-FROM node:alpine AS build
-WORKDIR /app
-COPY . .
-RUN yarn
-RUN yarn build
+FROM oven/bun:latest
 
-# production environment
-FROM nginx:stable-alpine
-COPY --from=build /app/out /usr/share/nginx/html
-COPY --from=build /app/nginx/nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# create & set working directory
+WORKDIR /app
+
+# copy source files
+COPY . .
+
+# install dependencies
+RUN bun install
+
+# start app
+RUN bun run build
+EXPOSE 3000
+CMD bun run start
