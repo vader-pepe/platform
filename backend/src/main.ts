@@ -13,7 +13,12 @@ import {
 import { initSentry } from './instrument.ts';
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule, {
+        cors: {
+            origin: getConfig('APP_ORIGINS_CSV').split(','),
+            methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
+        }
+    });
     const appPrefix = getConfig('API_VERSION');
     const appPort = getConfig('PORT');
 
