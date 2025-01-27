@@ -1,6 +1,134 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/v1/users/me": {
+      "get": {
+        "operationId": "UsersController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get current authenticated user info",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/v1/users/create": {
+      "post": {
+        "operationId": "UsersController_createUser",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Create User",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/v1/users/all": {
+      "get": {
+        "operationId": "UsersController_listAllUsers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "List all User",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/v1/users/{id}": {
+      "get": {
+        "operationId": "UsersController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/v1/users/password": {
+      "patch": {
+        "operationId": "UsersController_updatePassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePasswordUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Update user password",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/v1/users/delete": {
+      "delete": {
+        "operationId": "UsersController_deleteUser",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Delete User",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
     "/v1/auth/login": {
       "post": {
         "operationId": "AuthController_localLogin",
@@ -26,133 +154,18 @@
         ]
       }
     },
-    "/v1/user/me": {
+    "/v1/auth/google": {
       "get": {
-        "operationId": "UserController_me",
+        "operationId": "AuthController_auth",
         "parameters": [],
         "responses": {
           "200": {
             "description": ""
           }
         },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Get current authenticated user info",
+        "summary": "Login with google.",
         "tags": [
-          "User"
-        ]
-      }
-    },
-    "/v1/user/all": {
-      "get": {
-        "operationId": "UserController_listAllUsers",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "List all User",
-        "tags": [
-          "User"
-        ]
-      }
-    },
-    "/v1/user/create": {
-      "post": {
-        "operationId": "UserController_createUser",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateUserDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Create User",
-        "tags": [
-          "User"
-        ]
-      }
-    },
-    "/v1/user/delete": {
-      "delete": {
-        "operationId": "UserController_deleteUser",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeleteUserDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Delete User",
-        "tags": [
-          "User"
-        ]
-      }
-    },
-    "/v1/user/password": {
-      "patch": {
-        "operationId": "UserController_updatePassword",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdatePasswordUserDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ],
-        "summary": "Update user password",
-        "tags": [
-          "User"
+          "Auth"
         ]
       }
     }
@@ -160,7 +173,7 @@
   "info": {
     "title": "Platform API",
     "description": "IKAPIAR Web Backends",
-    "version": "0.0.2",
+    "version": "0.0.4",
     "contact": {}
   },
   "tags": [],
@@ -174,7 +187,7 @@
       }
     },
     "schemas": {
-      "LoginDto": {
+      "CreateUserDto": {
         "type": "object",
         "properties": {
           "email": {
@@ -189,7 +202,7 @@
           "password"
         ]
       },
-      "CreateUserDto": {
+      "UpdatePasswordUserDto": {
         "type": "object",
         "properties": {
           "email": {
@@ -215,7 +228,7 @@
           "email"
         ]
       },
-      "UpdatePasswordUserDto": {
+      "LoginDto": {
         "type": "object",
         "properties": {
           "email": {
